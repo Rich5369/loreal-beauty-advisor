@@ -19,8 +19,8 @@ This project uses HTML, CSS, and vanilla JavaScript. No packages or build step
 are required. Open `index.html` using the Codespaces Live Server extension.
 The supplied logo is reused from `img/loreal-logo.png`.
 
-In `script.js`, replace the empty `WORKER_URL` value with the endpoint provided
-by your class or Worker maintainer. No endpoint has been configured here. An
+In `script.js`, `WORKER_URL` is configured as
+`https://loreal-beauty-advisor-api.richardtienle.workers.dev`. An
 empty value shows a setup error without sending a request or fabricating an
 AI response. “Ready to connect” means an endpoint is set, not that it was tested.
 
@@ -84,5 +84,10 @@ Before the separate Worker deployment, the maintainer should:
 6. Deploy separately, provide the real URL for `WORKER_URL`, and test allowed
    origins, actual replies, multi-turn context, relevance boundaries, and
    failure behavior. Never link the Worker helper from `index.html`.
+
+The frontend is ready for GitHub Pages with `main` as the source branch and
+`/ (root)` as the publishing folder. All assets use relative paths. The intended
+URL is https://rich5369.github.io/loreal-beauty-advisor/. The Worker should allow
+`https://rich5369.github.io` as the frontend origin (origins have no path).
 
 No Worker was deployed and no live OpenAI connection was tested in this work.

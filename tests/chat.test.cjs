@@ -27,7 +27,9 @@ function setup(configured = true) {
     fetch(url, options) { requests.push({ url, options }); return new Promise((resolve, reject) => { respond = resolve; rejectRequest = reject; }); },
   });
   const source = readFileSync('script.js', 'utf8');
-  vm.runInContext(configured ? source.replace('const WORKER_URL = "";', 'const WORKER_URL = "https://mock.invalid/";') : source, context);
+  // Override the endpoint for both test modes; never contact the live Worker.
+  const testUrl = configured ? "https://mock.invalid/" : "";
+  vm.runInContext(source.replace(/const WORKER_URL = "[^"]*";/, `const WORKER_URL = "${testUrl}";`), context);
   return { ids, requests, fail() { rejectRequest(new TypeError("Mock network failure")); }, reply(data, ok = true) { respond({ ok, json: async () => data }); },
     send(text) { ids.userInput.value = text; return ids.chatForm.requestSubmit(); },
     history() { return JSON.parse(vm.runInContext('JSON.stringify(messages)', context)); },

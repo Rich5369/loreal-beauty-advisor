@@ -1,6 +1,6 @@
-// Paste only the class-hosted Cloudflare Worker URL here when it is available.
+// Public Cloudflare Worker endpoint; the Worker keeps all API credentials.
 // This is a public endpoint, never an API key. A blank value makes no requests.
-const WORKER_URL = "";
+const WORKER_URL = "https://loreal-beauty-advisor-api.richardtienle.workers.dev";
 
 const chatForm = document.getElementById("chatForm");
 const userInput = document.getElementById("userInput");
