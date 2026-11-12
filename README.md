@@ -91,3 +91,55 @@ URL is https://rich5369.github.io/loreal-beauty-advisor/. The Worker should allo
 `https://rich5369.github.io` as the frontend origin (origins have no path).
 
 No Worker was deployed and no live OpenAI connection was tested in this work.
+
+## Corporate-inspired branding
+
+The visual update follows [FutureBrand’s L’Oréal case study](https://www.futurebrand.com/our-work/loreal):
+black and white, a restrained vibrant red accent, and a small circular “O” motif.
+The supplied `BrandReview_LOREAL.pdf` was reviewed, especially pages 3–4:
+2019 paired Avant Garde Gothic with Bauer Bodoni, while 2020 paired Helvetica
+Now Display with Halesworth eText. These are historical references, not a claim
+that this student project implements L’Oréal’s current proprietary brand system.
+
+Colors are centralized in `style.css`:
+
+| Purpose | HEX |
+| --- | --- |
+| Black text and user bubbles | `#000000` |
+| White background and reversed text | `#FFFFFF` |
+| Vibrant red accent, Send, focus and errors | `#D71920` |
+| Red hover | `#B51219` |
+| Secondary text | `#595959` |
+| Subtle borders | `#DEDEDE` |
+| Input boundary | `#858585` |
+| Assistant surface | `#F5F5F5` |
+| Error and hover surface | `#FFF4F4` |
+
+**The red is a visual approximation, not a verified official L’Oréal HEX.**
+White on red is approximately 5.19:1; red on the pale red surface is 4.82:1;
+secondary text on the assistant surface is 6.42:1. The input boundary against
+white is 3.69:1. Focus outlines use red. Reduced-motion preferences disable
+animations and transitions; the loading animation changes its border rather
+than fading readable text.
+
+[Manrope](https://fonts.google.com/specimen/Manrope) provides a geometric,
+readable interface; [Bodoni Moda](https://fonts.google.com/specimen/Bodoni+Moda)
+provides selective serif headings inspired by the historical Bodoni pairing.
+Both are open-source fonts available through Google Fonts under the SIL Open
+Font License. They are loaded through Google's stylesheet with `display=swap`;
+system sans-serif and serif fallbacks remain available if fonts are blocked.
+No proprietary fonts are downloaded or redistributed. The supplied official
+logo image is used in both header and footer.
+
+### Branding verification
+
+Run `node --check script.js`, `node tests/chat.test.cjs`, and `git diff --check`.
+The mock suite covers suggestions, character counting, keyboard controls,
+loading, successful history, invalid replies, network and HTTP failures, safe
+text rendering, duplicate prevention, and reset/stale-response cancellation.
+The frontend logic, Worker URL, and Worker helper are unchanged by branding.
+Local asset references, selected contrast pairs, and the Google Fonts stylesheet
+and referenced font downloads were checked. CSS includes narrow mobile layouts,
+44px action controls, wrapping helper text, and reduced-motion support.
+No browser preview was available for desktop/mobile visual inspection, and no
+live Worker/OpenAI request was made as part of this visual update.

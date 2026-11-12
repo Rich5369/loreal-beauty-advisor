@@ -15,10 +15,12 @@ class Element {
 
 function setup(configured = true) {
   const ids = {};
+  const suggestion = new Element();
+  suggestion.dataset.suggestion = "Build my skincare routine";
   const document = {
     getElementById(id) { return ids[id] ||= new Element(); },
     createElement() { return new Element(); },
-    querySelectorAll() { return []; },
+    querySelectorAll() { return [suggestion]; },
   };
   const requests = [];
   let respond;
@@ -30,7 +32,7 @@ function setup(configured = true) {
   // Override the endpoint for both test modes; never contact the live Worker.
   const testUrl = configured ? "https://mock.invalid/" : "";
   vm.runInContext(source.replace(/const WORKER_URL = "[^"]*";/, `const WORKER_URL = "${testUrl}";`), context);
-  return { ids, requests, fail() { rejectRequest(new TypeError("Mock network failure")); }, reply(data, ok = true) { respond({ ok, json: async () => data }); },
+  return { ids, requests, suggestion, fail() { rejectRequest(new TypeError("Mock network failure")); }, reply(data, ok = true) { respond({ ok, json: async () => data }); },
     send(text) { ids.userInput.value = text; return ids.chatForm.requestSubmit(); },
     history() { return JSON.parse(vm.runInContext('JSON.stringify(messages)', context)); },
   };
@@ -87,5 +89,17 @@ function setup(configured = true) {
   keydown({ key: 'Enter', isComposing: true, preventDefault() { throw new Error('Composition was blocked'); } });
   keydown({ key: 'Enter', preventDefault() {} });
   assert.equal(submissions, 1);
-  console.log('PASS: unconfigured endpoint, safe text, duplicate prevention, loading, history, invalid reply, HTTP failure, reset, and stale-response cancellation.');
+  app = setup();
+  app.suggestion.listeners.click();
+  assert.equal(JSON.parse(app.requests[0].options.body).messages[0].content, 'Build my skincare routine');
+  assert.equal(app.suggestion.disabled, true);
+  app.reply({ choices: [{ message: { content: 'Suggested routine' } }] });
+  // Let the asynchronous submit handler finish updating the interface.
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(app.suggestion.disabled, false);
+  app.ids.userInput.value = 'Beauty';
+  app.ids.userInput.listeners.input();
+  assert.equal(app.ids.characterCount.textContent, '6 / 2000');
+  assert.equal(app.history().length, 2);
+  console.log('PASS: suggestions, character counter, keyboard controls, network errors, unconfigured endpoint, safe text, duplicate prevention, loading, history, invalid reply, HTTP failure, reset, and stale-response cancellation.');
 })().catch(error => { console.error(error); process.exitCode = 1; });
