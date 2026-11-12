@@ -1,64 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chat Assistant</title>
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-
-  <body>
-    <div class="page-wrapper">
-      <!------- Header / Branding ------->
-      <header class="site-header">
-        <h1 class="site-title">Smart Product Advisor</h1>
-      </header>
-
-      <!------- Chat Area ------->
-      <main>
-        <section class="chatbox">
-          <div id="chatWindow" class="chat-window">
-            <!-- messages will be appended here via JS -->
-          </div>
-
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Explore skincare, haircare, and makeup with the L'Oréal Smart Beauty Advisor." />
+  <title>L'Oréal Smart Beauty Advisor</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="page-wrapper">
+    <header class="site-header">
+      <a href="./" aria-label="L'Oréal Smart Beauty Advisor home"><img src="img/loreal-logo.png" alt="L'Oréal" class="brand-logo" /></a>
+      <span class="header-note">BEAUTY, MADE PERSONAL</span>
+    </header>
+    <main>
+      <section class="introduction" aria-labelledby="pageTitle">
+        <p class="eyebrow">YOUR PERSONAL BEAUTY COMPANION</p>
+        <h1 id="pageTitle">L'Oréal Smart<br /><em>Beauty Advisor.</em></h1>
+        <p>A little guidance. A routine that feels like you.<br />Explore skincare, haircare, and makeup, one conversation at a time.</p>
+      </section>
+      <section class="chatbox" aria-label="Beauty advisor chat">
+        <div class="chat-heading">
+          <div><h2>Let’s talk beauty</h2><p id="connectionStatus" role="status">Connection not configured</p></div>
+          <button id="newChat" class="text-button" type="button">↺ &nbsp; New chat</button>
+        </div>
+        <!-- Only conversation messages belong in the accessible live log. -->
+        <div id="chatWindow" class="chat-window" role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
+        <div class="suggestions" aria-label="Conversation starters">
+          <button type="button" data-suggestion="Build my skincare routine">Build my skincare routine <span aria-hidden="true">↗</span></button>
+          <button type="button" data-suggestion="Recommend products for dry skin">Care for dry skin <span aria-hidden="true">↗</span></button>
+          <button type="button" data-suggestion="Help me with haircare">Explore haircare <span aria-hidden="true">↗</span></button>
+          <button type="button" data-suggestion="What's the difference between serums and moisturizers?">Serum or moisturizer? <span aria-hidden="true">↗</span></button>
+        </div>
+        <div class="composer">
+          <p id="errorMessage" class="error-message" role="alert" hidden></p>
           <form id="chatForm" class="chat-form">
-            <label for="userInput" class="visually-hidden">Message</label>
-            <input
-              id="userInput"
-              name="userInput"
-              type="text"
-              placeholder="Ask me about products or routines…"
-              autocomplete="off"
-              required
-            />
-            <button type="submit" id="sendBtn">
-              <span class="material-icons">send</span>
-              <span class="visually-hidden">Send</span>
-            </button>
+            <label for="userInput" class="visually-hidden">Your beauty question</label>
+            <textarea id="userInput" name="userInput" rows="2" maxlength="2000" placeholder="Tell me what’s on your beauty mind…" aria-describedby="inputHelp characterCount" required></textarea>
+            <button type="submit" id="sendBtn" aria-label="Send message">↑</button>
           </form>
-        </section>
-      </main>
-
-      <!------- Footer Links ------->
-      <footer class="site-footer">
-        <p>&copy; 2025 Company Name. All rights reserved.</p>
-        <nav>
-          <!-- These URLs are placeholders -->
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Use</a>
-          <a href="#">Contact</a>
-        </nav>
-      </footer>
-    </div>
-
-    <script src="script.js"></script>
-  </body>
+          <div class="input-details"><span id="inputHelp">Enter to send · Shift + Enter for a new line</span><span id="characterCount">0 / 2000</span></div>
+        </div>
+        <p class="chat-disclaimer">AI guidance can be imperfect. Check product labels. For medical concerns, consult a qualified professional.</p>
+      </section>
+      <p class="closing-note">YOUR BEAUTY. YOUR QUESTIONS. YOUR OWN WAY.</p>
+    </main>
+    <footer class="site-footer"><span>L’ORÉAL</span><p>Because you’re worth it.</p><small>GCA student project · Not an official L’Oréal service.</small></footer>
+  </div>
+</body>
 </html>
