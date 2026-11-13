@@ -56,41 +56,47 @@ for errors, optionally with `{"error":{"message":"Service unavailable"}}`.
 The frontend displays its own safe error text for HTTP failures, network/CORS
 errors, malformed JSON, missing replies, and a 30-second timeout.
 
-## Worker integration still required (maintainer)
+## Worker deployment (maintainer)
 
-`RESOURCE_cloudflare-worker.js` is the original, unchanged server helper; it
-accepts `messages` and forwards the Chat Completions response. It currently uses
-`gpt-4o`, trusts browser messages, allows every origin, and does not preserve
-upstream error statuses. Do not deploy it unchanged for this application.
+`RESOURCE_cloudflare-worker.js` is the server-only implementation. Copy it into
+Cloudflare Workers separately; never link it from `index.html`. It uses `gpt-4.1`,
+prepends its own beauty-advisor system prompt, rejects browser system/developer
+roles, validates alternating conversation roles and content sizes, and handles
+upstream errors without forwarding private diagnostics. It allows only
+`https://rich5369.github.io`, handles OPTIONS, and rejects other HTTP methods.
 
-Before the separate Worker deployment, the maintainer should:
+The Worker reads `env.OPENAI_API_KEY` exclusively from a Cloudflare secret.
+Students do not handle keys. The maintainer must retain the existing secret in
+Cloudflare; never add credentials to source files. An optional `RATE_LIMITER`
+Cloudflare Rate Limiting binding is supported; configure it in the dashboard
+(for example, 10 requests per minute per IP) before relying on abuse protection.
+CORS does not prevent non-browser callers from forging the Origin header.
 
-1. Change the server model to `gpt-4.1` and prepend the system prompt from
-   `WORKER_PROMPT.md` on every request. Keep this logic on the server.
-2. Validate JSON, message sizes, total request size, and ordered user/assistant
-   roles, ending with a user message. Reject browser-supplied system/developer
-   messages rather than forwarding them. Set a bounded context budget and a
-   helpful error for conversations that exceed it.
-3. Configure `OPENAI_API_KEY` exclusively through the Worker secret dashboard;
-   never save a credential in a source file. The browser needs no credentials.
-4. Configure an `ALLOWED_ORIGIN` environment value for the actual frontend
-   origin. Handle OPTIONS preflight and POST with matching CORS headers on
-   success and errors; reject unsupported methods and other origins. CORS is
-   not authentication: add appropriate abuse controls and rate limits.
-5. Call the OpenAI Chat Completions endpoint server-side, handle upstream
-   network errors, and return meaningful non-2xx statuses without exposing
-   credentials or internal error details. Keep the successful response shape
-   above. Apply a server timeout and sensible output limit.
-6. Deploy separately, provide the real URL for `WORKER_URL`, and test allowed
-   origins, actual replies, multi-turn context, relevance boundaries, and
-   failure behavior. Never link the Worker helper from `index.html`.
+Both client and Worker limit requests to nine completed turns plus the current
+question (19 messages). Older complete turns are discarded from request context,
+but remain visible until New Chat or refresh. User messages are limited to 2,000
+characters and assistant replies to 6,000. Total request bodies are limited to
+100,000 bytes. The Worker uses a 25-second upstream timeout; the browser uses
+30 seconds. No browser storage is used.
 
-The frontend is ready for GitHub Pages with `main` as the source branch and
-`/ (root)` as the publishing folder. All assets use relative paths. The intended
-URL is https://rich5369.github.io/loreal-beauty-advisor/. The Worker should allow
-`https://rich5369.github.io` as the frontend origin (origins have no path).
+GitHub Pages should publish `main` from `/ (root)` at
+https://rich5369.github.io/loreal-beauty-advisor/. All assets use relative paths.
+Worker source changes in this repository do not deploy automatically. See
+`AUDIT_REPORT.md` for the actual deployment checks and remaining manual steps.
 
-No Worker was deployed and no live OpenAI connection was tested in this work.
+## Testing
+
+Run `node --check script.js`, `node tests/chat.test.cjs`,
+`node tests/worker.test.cjs`, and `git diff --check`.
+These dependency-free Node tests use mocked DOM/network objects; they do not
+verify real AI relevance. The Worker tests run the server source in a sandbox
+with mocked upstream responses, without credentials.
+
+Optional browser checks: install Python Playwright and Chromium outside the
+frontend, then run `python3 tests/browser-audit.py`. It tests local files at
+375, 768 and 1440 pixels with clearly mocked API replies. `--live` checks the
+published frontend and sends one real question to the Worker. Temporary
+screenshots are written to `/tmp`.
 
 ## Corporate-inspired branding
 
@@ -137,7 +143,7 @@ Run `node --check script.js`, `node tests/chat.test.cjs`, and `git diff --check`
 The mock suite covers suggestions, character counting, keyboard controls,
 loading, successful history, invalid replies, network and HTTP failures, safe
 text rendering, duplicate prevention, and reset/stale-response cancellation.
-The frontend logic, Worker URL, and Worker helper are unchanged by branding.
+The initial branding change preserved frontend logic; the final audit adds bounded history and a validated Worker implementation.
 Local asset references, selected contrast pairs, and the Google Fonts stylesheet
 and referenced font downloads were checked. CSS includes narrow mobile layouts,
 44px action controls, wrapping helper text, and reduced-motion support.

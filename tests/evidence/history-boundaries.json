@@ -1,0 +1,12 @@
+[
+  {
+    "messages": 21,
+    "live_status": 400,
+    "error": "Invalid message history."
+  },
+  {
+    "messages": 19,
+    "live_status": 200,
+    "result": "Real moisturizer explanation returned."
+  }
+]

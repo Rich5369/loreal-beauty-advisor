@@ -91,13 +91,15 @@ chatForm.addEventListener("submit", async (event) => {
     if (!response.ok) throw new Error("The advisor couldn’t answer right now. Please try again shortly.");
     const data = await response.json();
     const reply = data?.choices?.[0]?.message?.content;
-    if (typeof reply !== "string" || !reply.trim()) {
+    if (typeof reply !== "string" || !reply.trim() || reply.length > 6000) {
       throw new Error("The advisor returned an unreadable response. Please try again.");
     }
     if (activeRequest !== controller) return;
     typing.remove();
     addMessage("assistant", reply.trim());
     messages.push({ role: "user", content: question }, { role: "assistant", content: reply.trim() });
+    // Keep nine complete turns, matching the Worker’s 19-message request limit.
+    messages = messages.slice(-18);
   } catch (error) {
     if (activeRequest !== controller) return;
     typing.remove();
