@@ -111,7 +111,7 @@ Worker: https://loreal-beauty-advisor-api.richardtienle.workers.dev
 Files changed: `script.js`, `index.html`, `RESOURCE_cloudflare-worker.js`,
 `README.md`, `tests/chat.test.cjs`, new `tests/worker.test.cjs`,
 `tests/browser-audit.py`, `tests/evidence/*`, and this report. CSS and logo remain
-unchanged. The final response records the exact verified pushed commit; the
+unchanged. The final response records the exact verified local and remote commits; the
 report belongs to that commit (embedding its own hash would change it).
 
 ## Commit and push result
@@ -126,3 +126,18 @@ or repository credential that has write permission, then run `git push origin ma
 Do not put credentials into project files. The final response supplies the local
 commit hash. The live frontend still contains the previous source, so the new
 history fix has been verified locally but has not been published.
+
+
+## Later exact-rubric verification
+
+The user supplied the actual rubric screenshots after this audit. See
+`RUBRIC_CHECKLIST.md` for the criterion-by-criterion mapping. All Node checks
+passed again. The screenshot rubric does not specify a model; the gpt-4.1
+requirement belongs to the earlier expanded request.
+
+This check supersedes the earlier frontend publication status: remote main now
+contains `8750bb3cc58c919cb70cf2f6f9c6d0ed111a024b`. The public `script.js` was
+downloaded and is byte-for-byte identical to the tested local script, including
+the nine-turn history fix. My new checklist push still failed with HTTP 403, so
+only the later documentation remains unpublished. The Worker deployment and
+student reflection steps remain separate.
